@@ -2,52 +2,69 @@ import fitz
 import qrcode
 from pathlib import Path
 
-# Diretorio base e fontes
-base_dir = Path(__file__).parent
-fonteNegritoPath = base_dir / "open-sans.bold.ttf"
-fonteItalicoPath = base_dir / "open-sans.light-italic.ttf"
+def gera_placa(nomePop, nomeCie, codigo, urlQR):
 
-# Variaveis da placa
-nomePop = "Alecrim"
-nomeCie = "Rosmarinus officinalis"
-codigo = "12345678"
-urlQR = "https://github.com/enzosas/plaquinhasJardimBotanico"
+    # Diretorio base e fontes
+    base_dir = Path(__file__).parent
+    fonteNegritoPath = base_dir / "open-sans.bold.ttf"
+    fonteItalicoPath = base_dir / "open-sans.light-italic.ttf"
 
-# Inicializa documento
-doc = fitz.open("placa-fundo.pdf")
-pagina = doc[0]
+    # Inicializa documento
+    doc = fitz.open("placa-fundo.pdf")
+    pagina = doc[0]
 
-# Dimensoes
-paginaWidth = pagina.rect.width
-paginaHeight = pagina.rect.height
-print(paginaWidth)
-print(paginaHeight)
+    # Dimensoes
+    paginaWidth = pagina.rect.width
+    paginaHeight = pagina.rect.height
+    print(paginaWidth)
+    print(paginaHeight)
 
-# Insercao fontes
-pagina.insert_font(fontfile=fonteNegritoPath, fontname="F0")
-pagina.insert_font(fontfile=fonteItalicoPath, fontname="F1")
+    # Insercao fontes
+    pagina.insert_font(fontfile=fonteNegritoPath, fontname="F0")
+    pagina.insert_font(fontfile=fonteItalicoPath, fontname="F1")
 
-# Coordenadas uteis
-pontoSuperiorEsquerdoX = 62.5
-pontoSuperiorEsquerdoY = 62.5
-espacamentoEntreCaixas = 5
-alturaCaixaTitulo = 200
-alturaCaixaNomeCientifico = 50
-alturaCaixaCodigo = 50
+    # Coordenadas e tamanhos uteis
+    TAMFONTE_TITULO = 100
+    TAMFONTE_MENOR = 20
+    pontoSuperiorEsquerdoX = 62.5
+    pontoSuperiorEsquerdoY = 62.5
+    espacamentoEntreCaixas = 5
+    alturaCaixaTitulo = 200
+    alturaCaixaNomeCientifico = 50
+    alturaCaixaCodigo = 50
 
-# Criacao dos retangulos
-retanguloTitulo = fitz.Rect(62.5, 62.5, paginaWidth-62.5, paginaHeight-62.5)
+    # Criacao dos retangulos
+    retanguloTitulo = fitz.Rect(
+        pontoSuperiorEsquerdoX, 
+        pontoSuperiorEsquerdoY, 
+        paginaWidth - pontoSuperiorEsquerdoX, 
+        pontoSuperiorEsquerdoY + alturaCaixaTitulo
+    )
+    
+    retanguloCientifico = fitz.Rect(
+        pontoSuperiorEsquerdoX,
+        pontoSuperiorEsquerdoY + alturaCaixaTitulo + espacamentoEntreCaixas,
+        paginaWidth - pontoSuperiorEsquerdoX, 
+        pontoSuperiorEsquerdoY + alturaCaixaTitulo + espacamentoEntreCaixas + alturaCaixaNomeCientifico
+    )
 
+    retanguloCodigo = fitz.Rect(
+        pontoSuperiorEsquerdoX,
+        pontoSuperiorEsquerdoY + alturaCaixaTitulo + espacamentoEntreCaixas + alturaCaixaNomeCientifico + espacamentoEntreCaixas,
+        paginaWidth - pontoSuperiorEsquerdoX, 
+        pontoSuperiorEsquerdoY + alturaCaixaTitulo + espacamentoEntreCaixas + alturaCaixaNomeCientifico + espacamentoEntreCaixas + alturaCaixaCodigo
+    )
 
+    # Insercoes dos textos
+    pagina.insert_textbox(retanguloTitulo, nomePop, fontname="F0", fontsize=TAMFONTE_TITULO, color=(1, 1, 1), align=0)
+    pagina.insert_textbox(retanguloCientifico, nomeCie, fontname="F1", fontsize=TAMFONTE_MENOR, color=(1, 1, 1), align=0)
+    pagina.insert_textbox(retanguloCodigo, codigo, fontname="F1", fontsize=TAMFONTE_MENOR, color=(1, 1, 1), align=0)
 
-# Insercoes dos textos
-pagina.insert_textbox(retanguloTitulo, nomePop, fontname="F0", fontsize=100, color=(1, 1, 1), align=0)
-pagina.insert_text((50, 70), nomeCie, fontsize=12, color=(1, 1, 1))
-pagina.insert_text((50, 90), codigo, fontsize=10, color=(1, 1, 1))
+    doc.save(f"placa-{nomePop}.pdf")
+    doc.close()
+    print(f"Plaquinha do {nomePop} gerada.")
 
-doc.save(f"placa-{nomePop}.pdf")
-doc.close()
-print(f"Plaquinha do {nomePop} gerada.")
+gera_placa("Alecrim", "Rosmarinus officinalis", "12345678", "https://github.com/enzosas/plaquinhasJardimBotanico")
 
 
 
