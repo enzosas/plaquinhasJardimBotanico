@@ -15,12 +15,9 @@ urlQR = "https://github.com/enzosas/plaquinhasJardimBotanico"
 doc = fitz.open("placa-fundo.pdf")
 pagina = doc[0]
 
-fonte = fitz.Font(fontfile=fontePath)
-fonteItalico = fitz.Font(fontfile=fonteItalicoPath)
-
-pagina.insert_text((50, 50), nomePop, fontsize=16, font=fonte, color=(1, 1, 1))
-pagina.insert_text((50, 70), nomeCie, fontsize=12, fontfile=fonte, color=(1, 1, 1))
-pagina.insert_text((50, 90), codigo, fontsize=10, fontfile=fonte, color=(1, 1, 1))
+pagina.insert_text((50, 50), nomePop, fontsize=16, color=(1, 1, 1))
+pagina.insert_text((50, 70), nomeCie, fontsize=12, color=(1, 1, 1))
+pagina.insert_text((50, 90), codigo, fontsize=10, color=(1, 1, 1))
 
 doc.save(f"placa-{nomePop}.pdf")
 doc.close()
