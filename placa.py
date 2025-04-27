@@ -17,8 +17,6 @@ def gera_placa(nomePop, nomeCie, codigo, urlQR):
     # Dimensoes
     paginaWidth = pagina.rect.width
     paginaHeight = pagina.rect.height
-    print(paginaWidth)
-    print(paginaHeight)
 
     # Insercao fontes
     pagina.insert_font(fontfile=fonteNegritoPath, fontname="F0")
@@ -27,42 +25,45 @@ def gera_placa(nomePop, nomeCie, codigo, urlQR):
 
 
     # Coordenadas e tamanhos uteis
-    TAMFONTE_TITULO = 100
-    TAMFONTE_MENOR = 30
-    pontoSuperiorEsquerdoX = 62.5
-    pontoSuperiorEsquerdoY = 55
-    espacamentoEntreCaixas = 0
-    alturaCaixaTitulo = 170
-    alturaCaixaNomeCientifico = 100
-    alturaCaixaCodigo = 100
-    fix = -50
+    tamfonte_titulo = 100
+    tamfonte_menor = 30
+    pontoSuperiorEsquerdoX = 62 # Coordenada x do ponto mais ao noroeste onde sera escrito texto
+    pontoSuperiorEsquerdoY = 55 # Coordenada y do ponto mais ao noroeste onde sera escrito texto
+    espacamentoEntreCaixas = 10 
+    multiplicadorFonte = 1.3
+    altura = 200
+
+    retanguloCientifico_pontoSuperiorEsquerdoY = pontoSuperiorEsquerdoY + tamfonte_titulo*multiplicadorFonte + espacamentoEntreCaixas
+    retanguloCodigo_pontoSuperiorEsquerdoY = retanguloCientifico_pontoSuperiorEsquerdoY + tamfonte_menor*multiplicadorFonte + espacamentoEntreCaixas
+
+
 
     # Criacao dos retangulos
     retanguloTitulo = fitz.Rect(
         pontoSuperiorEsquerdoX, 
         pontoSuperiorEsquerdoY, 
         paginaWidth - pontoSuperiorEsquerdoX, 
-        pontoSuperiorEsquerdoY + alturaCaixaTitulo
+        altura + (pontoSuperiorEsquerdoX)
     )
     
     retanguloCientifico = fitz.Rect(
         pontoSuperiorEsquerdoX,
-        pontoSuperiorEsquerdoY + alturaCaixaTitulo + espacamentoEntreCaixas + fix,
+        retanguloCientifico_pontoSuperiorEsquerdoY,
         paginaWidth - pontoSuperiorEsquerdoX, 
-        pontoSuperiorEsquerdoY + alturaCaixaTitulo + espacamentoEntreCaixas + alturaCaixaNomeCientifico + fix
+        altura + retanguloCientifico_pontoSuperiorEsquerdoY
     )
 
     retanguloCodigo = fitz.Rect(
         pontoSuperiorEsquerdoX,
-        pontoSuperiorEsquerdoY + alturaCaixaTitulo + espacamentoEntreCaixas + alturaCaixaNomeCientifico + espacamentoEntreCaixas + 2*fix,
+        retanguloCodigo_pontoSuperiorEsquerdoY,
         paginaWidth - pontoSuperiorEsquerdoX, 
-        pontoSuperiorEsquerdoY + alturaCaixaTitulo + espacamentoEntreCaixas + alturaCaixaNomeCientifico + espacamentoEntreCaixas + alturaCaixaCodigo + 2*fix
+        altura + retanguloCodigo_pontoSuperiorEsquerdoY 
     )
 
     # Insercoes dos textos
-    pagina.insert_textbox(retanguloTitulo, nomePop, fontname="F0", fontsize=TAMFONTE_TITULO, color=(1, 1, 1), align=0)
-    pagina.insert_textbox(retanguloCientifico, nomeCie, fontname="F1", fontsize=TAMFONTE_MENOR, color=(1, 1, 1), align=0)
-    pagina.insert_textbox(retanguloCodigo, codigo, fontname="F2", fontsize=TAMFONTE_MENOR, color=(1, 1, 1), align=0)
+    pagina.insert_textbox(retanguloTitulo, nomePop, fontname="F0", fontsize=tamfonte_titulo, color=(1, 1, 1), align=0)
+    pagina.insert_textbox(retanguloCientifico, nomeCie, fontname="F1", fontsize=tamfonte_menor, color=(1, 1, 1), align=0)
+    pagina.insert_textbox(retanguloCodigo, codigo, fontname="F2", fontsize=tamfonte_menor, color=(1, 1, 1), align=0)
 
     doc.save(f"placa-{nomePop}.pdf")
     doc.close()
