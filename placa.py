@@ -2,63 +2,49 @@ import fitz
 import qrcode
 from pathlib import Path
 
-def gera_placa(nomePop, nomeCie, codigo, urlQR):
-
+def carrega_fontes(base_dir, pagina):
+    
     # Diretorio base e fontes
-    base_dir = Path(__file__).parent
     fonteNegritoPath = base_dir / "open-sans.bold.ttf"
     fonteItalicoPath = base_dir / "open-sans.italic.ttf"
     fonteNormalPath = base_dir / "open-sans.regular.ttf"
-
-    # Inicializa documento
-    doc = fitz.open("placa-fundo.pdf")
-    pagina = doc[0]
-
-    # Dimensoes
-    paginaWidth = pagina.rect.width
-    paginaHeight = pagina.rect.height
-
+    
     # Insercao fontes
     pagina.insert_font(fontfile=fonteNegritoPath, fontname="F0")
     pagina.insert_font(fontfile=fonteItalicoPath, fontname="F1")
     pagina.insert_font(fontfile=fonteNormalPath, fontname="F2")
 
+def gera_placa(nomePop, nomeCie, codigo, urlQR):
+
+    # Inicializa documento
+    doc = fitz.open("placa-fundo.pdf")
+    pagina = doc[0]
+    base_dir = Path(__file__).parent
+
+    carrega_fontes(base_dir, pagina)
+
+    # Dimensoes
+    paginaWidth = pagina.rect.width
+    paginaHeight = pagina.rect.height
 
     # Coordenadas e tamanhos uteis
     tamfonte_titulo = 100
     tamfonte_menor = 30
-    pontoSuperiorEsquerdoX = 62 # Coordenada x do ponto mais ao noroeste onde sera escrito texto
-    pontoSuperiorEsquerdoY = 55 # Coordenada y do ponto mais ao noroeste onde sera escrito texto
+    pSE_x = 62 # Coordenada x do ponto mais ao noroeste onde sera escrito texto
+    pSE_y = 55 # Coordenada y do ponto mais ao noroeste onde sera escrito texto
     espacamentoEntreCaixas = 10 
     multiplicadorFonte = 1.3
-    altura = 200
 
-    retanguloCientifico_pontoSuperiorEsquerdoY = pontoSuperiorEsquerdoY + tamfonte_titulo*multiplicadorFonte + espacamentoEntreCaixas
-    retanguloCodigo_pontoSuperiorEsquerdoY = retanguloCientifico_pontoSuperiorEsquerdoY + tamfonte_menor*multiplicadorFonte + espacamentoEntreCaixas
+    retanguloCientifico_pSE_y = pSE_y + tamfonte_titulo*multiplicadorFonte + espacamentoEntreCaixas
+    retanguloCodigo_pSE_y = retanguloCientifico_pSE_y + tamfonte_menor*multiplicadorFonte + espacamentoEntreCaixas
 
-
-
-    # Criacao dos retangulos
-    retanguloTitulo = fitz.Rect(
-        pontoSuperiorEsquerdoX, 
-        pontoSuperiorEsquerdoY, 
-        paginaWidth - pontoSuperiorEsquerdoX, 
-        altura + (pontoSuperiorEsquerdoX)
-    )
+    # Criacao das caixas de texto
+    def gera_caixa_texto(var, fonte):
+        return fitz.Rect(pSE_x, var, paginaWidth - pSE_x, var + 2*fonte)
     
-    retanguloCientifico = fitz.Rect(
-        pontoSuperiorEsquerdoX,
-        retanguloCientifico_pontoSuperiorEsquerdoY,
-        paginaWidth - pontoSuperiorEsquerdoX, 
-        altura + retanguloCientifico_pontoSuperiorEsquerdoY
-    )
-
-    retanguloCodigo = fitz.Rect(
-        pontoSuperiorEsquerdoX,
-        retanguloCodigo_pontoSuperiorEsquerdoY,
-        paginaWidth - pontoSuperiorEsquerdoX, 
-        altura + retanguloCodigo_pontoSuperiorEsquerdoY 
-    )
+    retanguloTitulo = gera_caixa_texto(pSE_y, tamfonte_titulo)
+    retanguloCientifico = gera_caixa_texto(retanguloCientifico_pSE_y, tamfonte_menor)
+    retanguloCodigo = gera_caixa_texto(retanguloCodigo_pSE_y, tamfonte_menor)
 
     # Insercoes dos textos
     pagina.insert_textbox(retanguloTitulo, nomePop, fontname="F0", fontsize=tamfonte_titulo, color=(1, 1, 1), align=0)
