@@ -30,11 +30,10 @@ def gera_placa(nomePop, nomeCie, codigo, urlQR):
     # Coordenadas e tamanhos uteis
     tamfonte_titulo = 100
     tamfonte_menor = 30
+    multiplicadorFonte = 1.3
+    espacamentoEntreCaixas = 10 
     pSE_x = 62 # Coordenada x do ponto mais ao noroeste onde sera escrito texto
     pSE_y = 55 # Coordenada y do ponto mais ao noroeste onde sera escrito texto
-    espacamentoEntreCaixas = 10 
-    multiplicadorFonte = 1.3
-
     retanguloCientifico_pSE_y = pSE_y + tamfonte_titulo*multiplicadorFonte + espacamentoEntreCaixas
     retanguloCodigo_pSE_y = retanguloCientifico_pSE_y + tamfonte_menor*multiplicadorFonte + espacamentoEntreCaixas
 
