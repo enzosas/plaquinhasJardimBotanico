@@ -15,7 +15,7 @@ def gera_QR(link):
     return qr_img
 
 
-def gera_placa(nomePop, nomeCie, codigo, urlQR, layout):
+def gera_placa(nomePop, nomeCie, codigo, urlQR, layout, diretorio_saida=None):
 
     # Diretorio base e fontes
     base_dir = Path(__file__).parent
@@ -161,8 +161,12 @@ def gera_placa(nomePop, nomeCie, codigo, urlQR, layout):
         qr_rect = fitz.Rect(qr_PID_x - qr_tam, qr_PID_y - qr_tam, qr_PID_x, qr_PID_y)
         pagina.insert_image(qr_rect, stream=img_bytes)
 
+    
+    # Define o diretorio de saida
+    if not diretorio_saida:
+        diretorio_saida = base_dir
 
-    # Salva e baixa
-    doc.save(f"placa-{nomePop}.pdf")
+    # Salva e fecha
+    caminho_final = Path(diretorio_saida)
+    doc.save(str(caminho_final))
     doc.close()
-    print(f"Plaquinha do {nomePop} gerada.")
