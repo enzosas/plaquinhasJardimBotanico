@@ -39,6 +39,7 @@ def gerar_placa_botao():
         return
 
     try:
+        print(diretorio_saida)
         gera_placa(nomePop, nomeCie, codigo, url, layout, diretorio_saida=diretorio_saida)
     except Exception as e:
         messagebox.showerror("Erro", str(e))
