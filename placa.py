@@ -162,9 +162,11 @@ def gera_placa(nomePop, nomeCie, codigo, urlQR, layout, diretorio_saida=None):
         pagina.insert_image(qr_rect, stream=img_bytes)
 
     
+    nome_arquivo = f"placa-{nomePop}.pdf"
+   
     # Define o diretorio de saida
     if not diretorio_saida:
-        diretorio_saida = base_dir
+        diretorio_saida = base_dir / nome_arquivo
 
     # Salva e fecha
     caminho_final = Path(diretorio_saida)
