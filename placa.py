@@ -161,7 +161,6 @@ def gera_placa(nomePop, nomeCie, codigo, urlQR, layout, diretorio_saida=None):
         qr_rect = fitz.Rect(qr_PID_x - qr_tam, qr_PID_y - qr_tam, qr_PID_x, qr_PID_y)
         pagina.insert_image(qr_rect, stream=img_bytes)
 
-    print(f"before  {diretorio_saida}")
     nome_arquivo = f"placa-{nomePop}.pdf"
 
     # Define o diretorio de saida, testa se foi inserido diretorio e se foi inserido nome do arquivo no diretorio
