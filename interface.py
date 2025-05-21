@@ -7,6 +7,8 @@ ctk.set_appearance_mode("Light")
 ctk.set_default_color_theme("green")
 
 VERDEPLACA = "#506C44"
+VERDEPLACADARK = "#405636"
+CINZAFRENTE = "#CECECE"
 
 # Mapeamento interface e backend
 layout_display_to_value = {
@@ -75,7 +77,7 @@ label_nomePop = ctk.CTkLabel(
 )
 label_nomePop.grid(row=0, column=0, padx=20, pady=(20, 0), sticky="w")
 
-entry_nomePop = ctk.CTkEntry(frame_conteudo, fg_color="white", border_color=VERDEPLACA)
+entry_nomePop = ctk.CTkEntry(frame_conteudo, fg_color="white", border_color=CINZAFRENTE)
 entry_nomePop.grid(row=1, column=0, padx=20, pady=(0, 10), sticky="ew")
 
 # Nome Científico
@@ -87,7 +89,7 @@ label_nomeCie = ctk.CTkLabel(
 )
 label_nomeCie.grid(row=2, column=0, padx=20, pady=(10, 0), sticky="w")
 
-entry_nomeCie = ctk.CTkEntry(frame_conteudo, fg_color="white", border_color=VERDEPLACA)
+entry_nomeCie = ctk.CTkEntry(frame_conteudo, fg_color="white", border_color=CINZAFRENTE)
 entry_nomeCie.grid(row=3, column=0, padx=20, pady=(0, 10), sticky="ew")
 
 # Código
@@ -99,7 +101,7 @@ label_codigo = ctk.CTkLabel(
 )
 label_codigo.grid(row=4, column=0, padx=20, pady=(10, 0), sticky="w")
 
-entry_codigo = ctk.CTkEntry(frame_conteudo, fg_color="white", border_color=VERDEPLACA)
+entry_codigo = ctk.CTkEntry(frame_conteudo, fg_color="white", border_color=CINZAFRENTE)
 entry_codigo.grid(row=5, column=0, padx=20, pady=(0, 10), sticky="ew")
 
 # URL
@@ -111,7 +113,7 @@ label_url = ctk.CTkLabel(
 )
 label_url.grid(row=6, column=0, padx=20, pady=(10, 0), sticky="w")
 
-entry_url = ctk.CTkEntry(frame_conteudo, fg_color="white", border_color=VERDEPLACA)
+entry_url = ctk.CTkEntry(frame_conteudo, fg_color="white", border_color=CINZAFRENTE)
 entry_url.grid(row=7, column=0, padx=20, pady=(0, 10), sticky="ew")
 
 # Layout
@@ -128,7 +130,8 @@ combo_layout = ctk.CTkComboBox(
     values=list(layout_display_to_value.keys()),
     state="readonly",
     fg_color="white",
-    border_color=VERDEPLACA,
+    border_color=CINZAFRENTE,
+    button_hover_color=VERDEPLACADARK,
     button_color=VERDEPLACA
 )
 combo_layout.grid(row=9, column=0, padx=20, pady=(0, 10), sticky="ew")
@@ -138,7 +141,8 @@ botao_gerar = ctk.CTkButton(
     frame_conteudo,
     text="Gerar Plaquinha",
     command=gerar_placa_botao,
-    fg_color=VERDEPLACA
+    fg_color=VERDEPLACA,
+    hover_color=VERDEPLACADARK
 )
 botao_gerar.grid(row=10, column=0, padx=20, pady=20)
 
