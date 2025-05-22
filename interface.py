@@ -2,7 +2,7 @@ import customtkinter as ctk
 from tkinter import messagebox
 from tkinter import filedialog as fd
 from placa import gera_placa
-from base_de_dados import pesquisar_por_id, buscar_nome_popular_wikidata
+from base_de_dados import pesquisar_por_id, buscar_nome_popular_wikidata, buscar_nome_popular_wikipedia
 
 
 
@@ -99,6 +99,7 @@ def preencher_campos_automaticamente():
         nomeCientifico = f"{genus} {sp1}"
         link = f"https://jbsm.inf.ufsm.br/acervo/item/{id.zfill(5)}"
         nomePopular = buscar_nome_popular_wikidata(nomeCientifico)
+        wikipedia = buscar_nome_popular_wikipedia(nomeCientifico)
 
         if not nomePopular:
             nomePopular = "Desconhecido"
@@ -116,6 +117,11 @@ def preencher_campos_automaticamente():
         entry_link2.delete(0, "end")
         entry_link2.insert(0, link)
         entry_link2.configure(state="readonly")
+
+        entry_observacoes.configure(state="normal")
+        entry_observacoes.delete("1.0", "end")         
+        entry_observacoes.insert("1.0", wikipedia)
+        entry_observacoes.configure(state="disabled")
 
     except Exception as e:
         messagebox.showerror("Erro na busca", str(e))
@@ -215,12 +221,16 @@ tab_manual.columnconfigure(0, weight=1)
 
 contadorRow = 0
 
+# Ajuste das colunas para expansão
+tab_automatico.columnconfigure(0, weight=1)
+tab_automatico.columnconfigure(1, weight=1)
+
 # Digite o ID
 label_digiteID = ctk.CTkLabel(tab_automatico, text="Digite o ID:", text_color="black")
-label_digiteID.grid(row=contadorRow, column=0, padx=20, pady=(20, 0), sticky="w")
+label_digiteID.grid(row=contadorRow, column=0, columnspan=2, padx=20, pady=(20, 0), sticky="w")
 contadorRow += 1
 entry_digiteID = ctk.CTkEntry(tab_automatico, fg_color="white", border_color=CINZAFRENTE)
-entry_digiteID.grid(row=contadorRow, column=0, padx=20, pady=(0, 10), sticky="ew")
+entry_digiteID.grid(row=contadorRow, column=0, columnspan=2, padx=20, pady=(0, 10), sticky="ew")
 contadorRow += 1
 
 # Botão de pesquisar
@@ -231,44 +241,36 @@ botao_pesquisar = ctk.CTkButton(
     fg_color=VERDEPLACA,
     hover_color=VERDEPLACADARK
 )
-botao_pesquisar.grid(row=contadorRow, column=0, padx=20, pady=20)
+botao_pesquisar.grid(row=contadorRow, column=0, columnspan=2, padx=20, pady=20)
 contadorRow += 1
-
-# Wikipedia
-label_observacoes = ctk.CTkLabel(tab_automatico, text="Pesquisa Wikipedia", text_color="black")
-label_observacoes.grid(row=0, column=1, padx=20, pady=(10, 0), sticky="w")
-entry_observacoes = ctk.CTkTextbox(tab_automatico, fg_color="white", border_color=CINZAFRENTE, border_width=1, height=10)
-entry_observacoes.grid(row=1, column=1, padx=20, pady=(0, 10), rowspan=2, sticky="ew")
-entry_observacoes.configure(state="disabled")
-entry_observacoes.columnconfigure(0, weight=0)
 
 # Nome Popular
 label_nomePop2 = ctk.CTkLabel(tab_automatico, text="Nome Popular", text_color="black")
-label_nomePop2.grid(row=contadorRow, column=0, padx=20, pady=(20, 0), sticky="w")
+label_nomePop2.grid(row=contadorRow, column=0, columnspan=2, padx=20, pady=(20, 0), sticky="w")
 contadorRow += 1
 entry_nomePop2 = ctk.CTkEntry(tab_automatico, fg_color="white", border_color=CINZAFRENTE)
-entry_nomePop2.grid(row=contadorRow, column=0, padx=20, pady=(0, 10), sticky="ew")
+entry_nomePop2.grid(row=contadorRow, column=0, columnspan=2, padx=20, pady=(0, 10), sticky="ew")
 contadorRow += 1
 
 # Nome Científico
 label_nomeCie2 = ctk.CTkLabel(tab_automatico, text="Nome Científico", text_color="black")
-label_nomeCie2.grid(row=contadorRow, column=0, padx=20, pady=(10, 0), sticky="w")
+label_nomeCie2.grid(row=contadorRow, column=0, columnspan=2, padx=20, pady=(10, 0), sticky="w")
 contadorRow += 1
 entry_nomeCie2 = ctk.CTkEntry(tab_automatico, fg_color="white", border_color=CINZAFRENTE, state="readonly", text_color=CINZADESABILITADO)
-entry_nomeCie2.grid(row=contadorRow, column=0, padx=20, pady=(0, 10), sticky="ew")
+entry_nomeCie2.grid(row=contadorRow, column=0, columnspan=2, padx=20, pady=(0, 10), sticky="ew")
 contadorRow += 1
 
 # Link
 label_link2 = ctk.CTkLabel(tab_automatico, text="Link", text_color="black")
-label_link2.grid(row=contadorRow, column=0, padx=20, pady=(10, 0), sticky="w")
+label_link2.grid(row=contadorRow, column=0, columnspan=2, padx=20, pady=(10, 0), sticky="w")
 contadorRow += 1
 entry_link2 = ctk.CTkEntry(tab_automatico, fg_color="white", border_color=CINZAFRENTE, state="readonly", text_color=CINZADESABILITADO)
-entry_link2.grid(row=contadorRow, column=0, padx=20, pady=(0, 10), sticky="ew")
+entry_link2.grid(row=contadorRow, column=0, columnspan=2, padx=20, pady=(0, 10), sticky="ew")
 contadorRow += 1
 
 # Layout
 label_layout2 = ctk.CTkLabel(tab_automatico, text="Layout da Plaquinha", text_color="black")
-label_layout2.grid(row=contadorRow, column=0, padx=20, pady=(10, 0), sticky="w")
+label_layout2.grid(row=contadorRow, column=0, columnspan=2, padx=20, pady=(10, 0), sticky="w")
 contadorRow += 1
 combo_layout2 = ctk.CTkComboBox(
     tab_automatico,
@@ -279,18 +281,26 @@ combo_layout2 = ctk.CTkComboBox(
     button_hover_color=VERDEPLACADARK,
     button_color=VERDEPLACA
 )
-combo_layout2.grid(row=contadorRow, column=0, padx=20, pady=(0, 10), sticky="ew")
+combo_layout2.grid(row=contadorRow, column=0, columnspan=2, padx=20, pady=(0, 10), sticky="ew")
 contadorRow += 1
 
 # Botão de gerar
-botao_pesquisar = ctk.CTkButton(
+botao_gerar_automatico = ctk.CTkButton(
     tab_automatico,
     text="Gerar Plaquinha",
     command=gerar_placa_botao_automatico,
     fg_color=VERDEPLACA,
     hover_color=VERDEPLACADARK
 )
-botao_pesquisar.grid(row=contadorRow, column=0, padx=20, pady=20)
+botao_gerar_automatico.grid(row=contadorRow, column=0, columnspan=2, padx=20, pady=20)
+contadorRow += 1
+
+# Wikipedia
+label_observacoes = ctk.CTkLabel(tab_automatico, text="Pesquisa Wikipedia", text_color="black")
+label_observacoes.grid(row=0, column=2, columnspan=2, padx=20, pady=(10, 0), sticky="w")
+entry_observacoes = ctk.CTkTextbox(tab_automatico, fg_color="white", border_color=CINZAFRENTE, border_width=1, height=100, wrap="word")
+entry_observacoes.grid(row=1, column=2, columnspan=2, rowspan=10, padx=20, pady=(0, 10), sticky="nsew")
+entry_observacoes.configure(state="disabled")
 
 # Ajuste da largura da coluna da aba para expandir com a janela
 tab_automatico.columnconfigure(0, weight=1)
