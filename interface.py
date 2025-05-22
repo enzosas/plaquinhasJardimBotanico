@@ -2,7 +2,8 @@ import customtkinter as ctk
 from tkinter import messagebox
 from tkinter import filedialog as fd
 from placa import gera_placa
-from base_de_dados import pesquisar_por_id
+from base_de_dados import pesquisar_por_id, buscar_nome_popular_wikidata
+
 
 
 
@@ -13,6 +14,7 @@ ctk.set_default_color_theme("green")
 VERDEPLACA = "#506C44"
 VERDEPLACADARK = "#405636"
 CINZAFRENTE = "#CECECE"
+CINZADESABILITADO = "#7F7F7F"
 
 # Mapeamento entre o texto exibido e o valor real do layout
 layout_display_to_value = {
@@ -96,12 +98,14 @@ def preencher_campos_automaticamente():
         sp1 = str(dados.get("sp1", "")).strip()
         nomeCientifico = f"{genus} {sp1}"
         link = f"https://jbsm.inf.ufsm.br/acervo/item/{id.zfill(5)}"
+        nomePopular = buscar_nome_popular_wikidata(nomeCientifico)
+
+        if not nomePopular:
+            nomePopular = "Desconhecido"
 
         # Preencher campos
-        entry_nomePop2.configure(state="normal")
         entry_nomePop2.delete(0, "end")
-        entry_nomePop2.insert(0, "placeholder")
-        entry_nomePop2.configure(state="readonly")
+        entry_nomePop2.insert(0, nomePopular)
 
         entry_nomeCie2.configure(state="normal")
         entry_nomeCie2.delete(0, "end")
@@ -234,7 +238,7 @@ contadorRow += 1
 label_nomePop2 = ctk.CTkLabel(tab_automatico, text="Nome Popular", text_color="black")
 label_nomePop2.grid(row=contadorRow, column=0, padx=20, pady=(20, 0), sticky="w")
 contadorRow += 1
-entry_nomePop2 = ctk.CTkEntry(tab_automatico, fg_color="white", border_color=CINZAFRENTE, state="readonly")
+entry_nomePop2 = ctk.CTkEntry(tab_automatico, fg_color="white", border_color=CINZAFRENTE)
 entry_nomePop2.grid(row=contadorRow, column=0, padx=20, pady=(0, 10), sticky="ew")
 contadorRow += 1
 
@@ -242,7 +246,7 @@ contadorRow += 1
 label_nomeCie2 = ctk.CTkLabel(tab_automatico, text="Nome Científico", text_color="black")
 label_nomeCie2.grid(row=contadorRow, column=0, padx=20, pady=(10, 0), sticky="w")
 contadorRow += 1
-entry_nomeCie2 = ctk.CTkEntry(tab_automatico, fg_color="white", border_color=CINZAFRENTE, state="readonly")
+entry_nomeCie2 = ctk.CTkEntry(tab_automatico, fg_color="white", border_color=CINZAFRENTE, state="readonly", text_color=CINZADESABILITADO)
 entry_nomeCie2.grid(row=contadorRow, column=0, padx=20, pady=(0, 10), sticky="ew")
 contadorRow += 1
 
@@ -250,7 +254,7 @@ contadorRow += 1
 label_link2 = ctk.CTkLabel(tab_automatico, text="Link", text_color="black")
 label_link2.grid(row=contadorRow, column=0, padx=20, pady=(10, 0), sticky="w")
 contadorRow += 1
-entry_link2 = ctk.CTkEntry(tab_automatico, fg_color="white", border_color=CINZAFRENTE, state="readonly")
+entry_link2 = ctk.CTkEntry(tab_automatico, fg_color="white", border_color=CINZAFRENTE, state="readonly", text_color=CINZADESABILITADO)
 entry_link2.grid(row=contadorRow, column=0, padx=20, pady=(0, 10), sticky="ew")
 contadorRow += 1
 
