@@ -2,6 +2,8 @@ import customtkinter as ctk
 from tkinter import messagebox
 from tkinter import filedialog as fd
 from placa import gera_placa
+from base_de_dados import pesquisar_por_id
+
 
 
 ctk.set_appearance_mode("Light")
@@ -19,8 +21,8 @@ layout_display_to_value = {
     "Layout QR Grande": "layout2"
 }
 
-# Botao
-def gerar_placa_botao():
+# Botao Manual
+def gerar_placa_botao_manual():
     nomePop = entry_nomePop.get()
     nomeCie = entry_nomeCie.get()
     codigo = entry_codigo.get()
@@ -45,6 +47,74 @@ def gerar_placa_botao():
         gera_placa(nomePop, nomeCie, codigo, url, layout, diretorio_saida=diretorio_saida)
     except Exception as e:
         messagebox.showerror("Erro", str(e))
+
+# Botao Automatico
+def gerar_placa_botao_automatico():
+    nomePop = entry_nomePop2.get()
+    nomeCie = entry_nomeCie2.get()
+    url = entry_link2.get()
+    layout_display = combo_layout2.get()
+    layout = layout_display_to_value.get(layout_display)
+    id = entry_digiteID.get()
+
+    if not all([nomePop, nomeCie, url, layout, id]):
+        messagebox.showwarning("Campos obrigatórios", "Preencha todos os campos e importe os dados corretamente.")
+        return
+
+    codigo = id.zfill(5)
+
+    diretorio_saida = fd.asksaveasfilename(
+        defaultextension=".pdf",
+        filetypes=[("Arquivo PDF", "*.pdf")],
+        initialfile=f"placa-{nomePop}.pdf",
+        title="Salvar Plaquinha Como"
+    )
+    if not diretorio_saida:
+        return
+
+    try:
+        gera_placa(nomePop, nomeCie, codigo, url, layout, diretorio_saida=diretorio_saida)
+    except Exception as e:
+        messagebox.showerror("Erro", str(e))
+
+
+# Preencher automaticamente apos pesquisa
+def preencher_campos_automaticamente():
+    id = entry_digiteID.get()
+    if not id:
+        messagebox.showwarning("ID ausente", "Digite um ID para buscar.")
+        return
+    
+    try:
+        dados = pesquisar_por_id(id)
+        
+        if dados is None:
+            messagebox.showwarning("ID não encontrado", f"Nenhum dado encontrado para o ID '{id}'.")
+            return
+
+        genus = str(dados.get("genus", "")).strip()
+        sp1 = str(dados.get("sp1", "")).strip()
+        nomeCientifico = f"{genus} {sp1}"
+        link = f"https://jbsm.inf.ufsm.br/acervo/item/{id.zfill(5)}"
+
+        # Preencher campos
+        entry_nomePop2.configure(state="normal")
+        entry_nomePop2.delete(0, "end")
+        entry_nomePop2.insert(0, "placeholder")
+        entry_nomePop2.configure(state="readonly")
+
+        entry_nomeCie2.configure(state="normal")
+        entry_nomeCie2.delete(0, "end")
+        entry_nomeCie2.insert(0, nomeCientifico)
+        entry_nomeCie2.configure(state="readonly")
+
+        entry_link2.configure(state="normal")
+        entry_link2.delete(0, "end")
+        entry_link2.insert(0, link)
+        entry_link2.configure(state="readonly")
+
+    except Exception as e:
+        messagebox.showerror("Erro na busca", str(e))
 
 
 # Janela principal
@@ -73,40 +143,44 @@ tabview = ctk.CTkTabview(
     segmented_button_unselected_hover_color=CINZAFRENTE,
     segmented_button_fg_color=CINZAFRENTE)
 tabview.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew")
-tab_placa = tabview.add("Manual")
-tab_sobre = tabview.add("Automático por ID")
+tab_manual = tabview.add("Manual")
+tab_automatico = tabview.add("Automático por ID")
+
+
+
+
 
 # Aba Manual
 
 # Nome Popular
-label_nomePop = ctk.CTkLabel(tab_placa, text="Nome Popular", text_color="black")
+label_nomePop = ctk.CTkLabel(tab_manual, text="Nome Popular", text_color="black")
 label_nomePop.grid(row=0, column=0, padx=20, pady=(20, 0), sticky="w")
-entry_nomePop = ctk.CTkEntry(tab_placa, fg_color="white", border_color=CINZAFRENTE)
+entry_nomePop = ctk.CTkEntry(tab_manual, fg_color="white", border_color=CINZAFRENTE)
 entry_nomePop.grid(row=1, column=0, padx=20, pady=(0, 10), sticky="ew")
 
 # Nome Científico
-label_nomeCie = ctk.CTkLabel(tab_placa, text="Nome Científico", text_color="black")
+label_nomeCie = ctk.CTkLabel(tab_manual, text="Nome Científico", text_color="black")
 label_nomeCie.grid(row=2, column=0, padx=20, pady=(10, 0), sticky="w")
-entry_nomeCie = ctk.CTkEntry(tab_placa, fg_color="white", border_color=CINZAFRENTE)
+entry_nomeCie = ctk.CTkEntry(tab_manual, fg_color="white", border_color=CINZAFRENTE)
 entry_nomeCie.grid(row=3, column=0, padx=20, pady=(0, 10), sticky="ew")
 
 # Código
-label_codigo = ctk.CTkLabel(tab_placa, text="Código", text_color="black")
+label_codigo = ctk.CTkLabel(tab_manual, text="Código", text_color="black")
 label_codigo.grid(row=4, column=0, padx=20, pady=(10, 0), sticky="w")
-entry_codigo = ctk.CTkEntry(tab_placa, fg_color="white", border_color=CINZAFRENTE)
+entry_codigo = ctk.CTkEntry(tab_manual, fg_color="white", border_color=CINZAFRENTE)
 entry_codigo.grid(row=5, column=0, padx=20, pady=(0, 10), sticky="ew")
 
 # URL
-label_url = ctk.CTkLabel(tab_placa, text="URL para QR Code", text_color="black")
+label_url = ctk.CTkLabel(tab_manual, text="URL para QR Code", text_color="black")
 label_url.grid(row=6, column=0, padx=20, pady=(10, 0), sticky="w")
-entry_url = ctk.CTkEntry(tab_placa, fg_color="white", border_color=CINZAFRENTE)
+entry_url = ctk.CTkEntry(tab_manual, fg_color="white", border_color=CINZAFRENTE)
 entry_url.grid(row=7, column=0, padx=20, pady=(0, 10), sticky="ew")
 
 # Layout
-label_layout = ctk.CTkLabel(tab_placa, text="Layout da Plaquinha", text_color="black")
+label_layout = ctk.CTkLabel(tab_manual, text="Layout da Plaquinha", text_color="black")
 label_layout.grid(row=8, column=0, padx=20, pady=(10, 0), sticky="w")
 combo_layout = ctk.CTkComboBox(
-    tab_placa,
+    tab_manual,
     values=list(layout_display_to_value.keys()),
     state="readonly",
     fg_color="white",
@@ -118,20 +192,96 @@ combo_layout.grid(row=9, column=0, padx=20, pady=(0, 10), sticky="ew")
 
 # Botão de gerar
 botao_gerar = ctk.CTkButton(
-    tab_placa,
+    tab_manual,
     text="Gerar Plaquinha",
-    command=gerar_placa_botao,
+    command=gerar_placa_botao_manual,
     fg_color=VERDEPLACA,
     hover_color=VERDEPLACADARK
 )
 botao_gerar.grid(row=10, column=0, padx=20, pady=20)
 
 # Ajuste da largura da coluna da aba para expandir com a janela
-tab_placa.columnconfigure(0, weight=1)
+tab_manual.columnconfigure(0, weight=1)
 
 
-# Aba Automatico
 
+
+
+# Tab Automatico
+
+contadorRow = 0
+
+# Digite o ID
+label_digiteID = ctk.CTkLabel(tab_automatico, text="Digite o ID:", text_color="black")
+label_digiteID.grid(row=contadorRow, column=0, padx=20, pady=(20, 0), sticky="w")
+contadorRow += 1
+entry_digiteID = ctk.CTkEntry(tab_automatico, fg_color="white", border_color=CINZAFRENTE)
+entry_digiteID.grid(row=contadorRow, column=0, padx=20, pady=(0, 10), sticky="ew")
+contadorRow += 1
+
+# Botão de pesquisar
+botao_pesquisar = ctk.CTkButton(
+    tab_automatico,
+    text="Importar informações",
+    command=preencher_campos_automaticamente,
+    fg_color=VERDEPLACA,
+    hover_color=VERDEPLACADARK
+)
+botao_pesquisar.grid(row=contadorRow, column=0, padx=20, pady=20)
+contadorRow += 1
+
+# Nome Popular
+label_nomePop2 = ctk.CTkLabel(tab_automatico, text="Nome Popular", text_color="black")
+label_nomePop2.grid(row=contadorRow, column=0, padx=20, pady=(20, 0), sticky="w")
+contadorRow += 1
+entry_nomePop2 = ctk.CTkEntry(tab_automatico, fg_color="white", border_color=CINZAFRENTE, state="readonly")
+entry_nomePop2.grid(row=contadorRow, column=0, padx=20, pady=(0, 10), sticky="ew")
+contadorRow += 1
+
+# Nome Científico
+label_nomeCie2 = ctk.CTkLabel(tab_automatico, text="Nome Científico", text_color="black")
+label_nomeCie2.grid(row=contadorRow, column=0, padx=20, pady=(10, 0), sticky="w")
+contadorRow += 1
+entry_nomeCie2 = ctk.CTkEntry(tab_automatico, fg_color="white", border_color=CINZAFRENTE, state="readonly")
+entry_nomeCie2.grid(row=contadorRow, column=0, padx=20, pady=(0, 10), sticky="ew")
+contadorRow += 1
+
+# Link
+label_link2 = ctk.CTkLabel(tab_automatico, text="Link", text_color="black")
+label_link2.grid(row=contadorRow, column=0, padx=20, pady=(10, 0), sticky="w")
+contadorRow += 1
+entry_link2 = ctk.CTkEntry(tab_automatico, fg_color="white", border_color=CINZAFRENTE, state="readonly")
+entry_link2.grid(row=contadorRow, column=0, padx=20, pady=(0, 10), sticky="ew")
+contadorRow += 1
+
+# Layout
+label_layout2 = ctk.CTkLabel(tab_automatico, text="Layout da Plaquinha", text_color="black")
+label_layout2.grid(row=contadorRow, column=0, padx=20, pady=(10, 0), sticky="w")
+contadorRow += 1
+combo_layout2 = ctk.CTkComboBox(
+    tab_automatico,
+    values=list(layout_display_to_value.keys()),
+    state="readonly",
+    fg_color="white",
+    border_color=CINZAFRENTE,
+    button_hover_color=VERDEPLACADARK,
+    button_color=VERDEPLACA
+)
+combo_layout2.grid(row=contadorRow, column=0, padx=20, pady=(0, 10), sticky="ew")
+contadorRow += 1
+
+# Botão de gerar
+botao_pesquisar = ctk.CTkButton(
+    tab_automatico,
+    text="Gerar Plaquinha",
+    command=gerar_placa_botao_automatico,
+    fg_color=VERDEPLACA,
+    hover_color=VERDEPLACADARK
+)
+botao_pesquisar.grid(row=contadorRow, column=0, padx=20, pady=20)
+
+# Ajuste da largura da coluna da aba para expandir com a janela
+tab_automatico.columnconfigure(0, weight=1)
 
 # Expansao da janela
 app.columnconfigure(0, weight=1)
