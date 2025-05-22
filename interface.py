@@ -234,6 +234,14 @@ botao_pesquisar = ctk.CTkButton(
 botao_pesquisar.grid(row=contadorRow, column=0, padx=20, pady=20)
 contadorRow += 1
 
+# Wikipedia
+label_observacoes = ctk.CTkLabel(tab_automatico, text="Pesquisa Wikipedia", text_color="black")
+label_observacoes.grid(row=0, column=1, padx=20, pady=(10, 0), sticky="w")
+entry_observacoes = ctk.CTkTextbox(tab_automatico, fg_color="white", border_color=CINZAFRENTE, border_width=1, height=10)
+entry_observacoes.grid(row=1, column=1, padx=20, pady=(0, 10), rowspan=2, sticky="ew")
+entry_observacoes.configure(state="disabled")
+entry_observacoes.columnconfigure(0, weight=0)
+
 # Nome Popular
 label_nomePop2 = ctk.CTkLabel(tab_automatico, text="Nome Popular", text_color="black")
 label_nomePop2.grid(row=contadorRow, column=0, padx=20, pady=(20, 0), sticky="w")
