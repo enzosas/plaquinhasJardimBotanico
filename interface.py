@@ -118,10 +118,10 @@ def preencher_campos_automaticamente():
         entry_link2.insert(0, link)
         entry_link2.configure(state="readonly")
 
-        entry_observacoes.configure(state="normal")
-        entry_observacoes.delete("1.0", "end")         
-        entry_observacoes.insert("1.0", wikipedia)
-        entry_observacoes.configure(state="disabled")
+        entry_wikipedia.configure(state="normal")
+        entry_wikipedia.delete("1.0", "end")         
+        entry_wikipedia.insert("1.0", str(wikipedia))
+        entry_wikipedia.configure(state="disabled") 
 
     except Exception as e:
         messagebox.showerror("Erro na busca", str(e))
@@ -233,7 +233,7 @@ entry_digiteID = ctk.CTkEntry(tab_automatico, fg_color="white", border_color=CIN
 entry_digiteID.grid(row=contadorRow, column=0, columnspan=2, padx=20, pady=(0, 10), sticky="ew")
 contadorRow += 1
 
-# Botão de pesquisar
+# Botao de pesquisar
 botao_pesquisar = ctk.CTkButton(
     tab_automatico,
     text="Importar informações",
@@ -296,11 +296,11 @@ botao_gerar_automatico.grid(row=contadorRow, column=0, columnspan=2, padx=20, pa
 contadorRow += 1
 
 # Wikipedia
-label_observacoes = ctk.CTkLabel(tab_automatico, text="Pesquisa Wikipedia", text_color="black")
-label_observacoes.grid(row=0, column=2, columnspan=2, padx=20, pady=(10, 0), sticky="w")
-entry_observacoes = ctk.CTkTextbox(tab_automatico, fg_color="white", border_color=CINZAFRENTE, border_width=1, height=100, wrap="word")
-entry_observacoes.grid(row=1, column=2, columnspan=2, rowspan=10, padx=20, pady=(0, 10), sticky="nsew")
-entry_observacoes.configure(state="disabled")
+label_wikipedia = ctk.CTkLabel(tab_automatico, text="Pesquisa Wikipedia", text_color="black")
+label_wikipedia.grid(row=0, column=2, columnspan=2, padx=20, pady=(10, 0), sticky="w")
+entry_wikipedia = ctk.CTkTextbox(tab_automatico, fg_color="white", border_color=CINZAFRENTE, border_width=1, height=100, wrap="word")
+entry_wikipedia.grid(row=1, column=2, columnspan=2, rowspan=10, padx=20, pady=(0, 10), sticky="nsew")
+entry_wikipedia.configure(state="disabled")
 
 # Ajuste da largura da coluna da aba para expandir com a janela
 tab_automatico.columnconfigure(0, weight=1)
