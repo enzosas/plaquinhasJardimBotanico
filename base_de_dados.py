@@ -11,12 +11,30 @@ url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid=
 
 df = pd.read_csv(url)
 
+
 def pesquisar_por_id(id):
     resultado = df[df["numtombo"] == int(id)]
     if resultado.empty:
-        print(f"Nenhum registro encontrado com esse id = {id}")
+        return None
     else:
-        return resultado.to_dict(orient="records")[0]  
+        return resultado.to_dict(orient="records")[0] 
+
+
+def pesquisar_por_nome_cientifico(nomecie):
+    try:
+        primeira_palavra, segunda_palavra = nomecie.strip().split(maxsplit=1)
+    except ValueError:
+        return None
+
+    resultado = df[(df["genus"].str.lower() == primeira_palavra.lower()) &
+                   (df["sp1"].str.lower() == segunda_palavra.lower())]
+
+    if resultado.empty:
+        return None
+    else:
+        return resultado.to_dict(orient="records")[0]
+
+ 
 
 def buscar_nome_popular_wikipedia(nome_cientifico):
     try:
@@ -64,3 +82,5 @@ def buscar_nome_popular_wikidata(nome_cientifico):
             return results[0]['label_pt']['value'].title()
 
     return None
+
+print(buscar_nome_popular_wikipedia("Spiraea ariifolia"))

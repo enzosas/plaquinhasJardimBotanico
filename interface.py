@@ -2,7 +2,7 @@ import customtkinter as ctk
 from tkinter import messagebox
 from tkinter import filedialog as fd
 from placa import gera_placa
-from base_de_dados import pesquisar_por_id, buscar_nome_popular_wikidata, buscar_nome_popular_wikipedia
+from base_de_dados import *
 
 
 ctk.set_appearance_mode("Light")
@@ -48,8 +48,8 @@ def gerar_placa_botao_manual():
     except Exception as e:
         messagebox.showerror("Erro", str(e))
 
-# Botao Automatico
-def gerar_placa_botao_automatico():
+# Botao Automatico ID
+def gerar_placa_botao_automatico_id():
     nomePop = entry_nomePop2.get()
     nomeCie = entry_nomeCie2.get()
     url = entry_link2.get()
@@ -77,8 +77,36 @@ def gerar_placa_botao_automatico():
     except Exception as e:
         messagebox.showerror("Erro", str(e))
 
+# Botao Automatico NomeCie
+def gerar_placa_botao_automatico_nomecie():
+    nomePop = entry_nomePop3.get()
+    nomeCie = entry_nomeCie3.get()
+    url = entry_link3.get()
+    layout_display = combo_layout3.get()
+    layout = layout_display_to_value.get(layout_display)
+    id = entry_codigo3.get()
 
-# Preencher automaticamente apos pesquisa
+    if not all([nomePop, nomeCie, url, layout, id]):
+        messagebox.showwarning("Campos obrigatórios", "Preencha todos os campos e importe os dados corretamente.")
+        return
+
+    codigo = id.zfill(5)
+
+    diretorio_saida = fd.asksaveasfilename(
+        defaultextension=".pdf",
+        filetypes=[("Arquivo PDF", "*.pdf")],
+        initialfile=f"placa-{nomePop}.pdf",
+        title="Salvar Plaquinha Como"
+    )
+    if not diretorio_saida:
+        return
+
+    try:
+        gera_placa(nomePop, nomeCie, codigo, url, layout, diretorio_saida=diretorio_saida)
+    except Exception as e:
+        messagebox.showerror("Erro", str(e))
+
+# Preencher automaticamente apos pesquisa id
 def preencher_campos_automaticamente_id():
     id = entry_digiteID.get()
     if not id:
@@ -123,6 +151,54 @@ def preencher_campos_automaticamente_id():
 
     except Exception as e:
         messagebox.showerror("Erro na busca", str(e))
+
+
+# Preencher automaticamente apos pesquisa nomecie
+def preencher_campos_automaticamente_nomecie():
+    nomecie = entry_nomeCie3.get()
+    if not nomecie:
+        messagebox.showwarning("Nome científico ausente", "Digite um nome científico para buscar.")
+        return
+    
+    try:
+        dados = pesquisar_por_nome_cientifico(nomecie)
+         
+        if dados is None:
+            messagebox.showwarning("Nome científico não encontrado", f"Nenhum dado encontrado para '{nomecie}'.")
+            return
+
+        print(nomecie)
+        id = str(int(dados.get("numtombo","")))
+        link = f"https://jbsm.inf.ufsm.br/acervo/item/{id.zfill(5)}"
+        nomePopular = buscar_nome_popular_wikidata(nomecie)
+        wikipedia = buscar_nome_popular_wikipedia(nomecie)
+
+        if not nomePopular:
+            nomePopular = "Desconhecido"
+
+        # Preencher campos
+        entry_nomePop3.delete(0, "end")
+        entry_nomePop3.insert(0, nomePopular)
+
+        entry_codigo3.configure(state="normal")
+        entry_codigo3.delete(0, "end")
+        entry_codigo3.insert(0, id.zfill(5))
+        entry_codigo3.configure(state="readonly")
+
+        entry_link3.configure(state="normal")
+        entry_link3.delete(0, "end")
+        entry_link3.insert(0, link)
+        entry_link3.configure(state="readonly")
+
+        entry_wikipedia3.configure(state="normal")
+        entry_wikipedia3.delete("1.0", "end")         
+        entry_wikipedia3.insert("1.0", str(wikipedia))
+        entry_wikipedia3.configure(state="disabled") 
+
+    except Exception as e:
+        messagebox.showerror("Erro na busca", str(e))
+
+        
 
 
 # Janela principal
@@ -288,11 +364,11 @@ contadorRow += 1
 botao_gerar_automatico = ctk.CTkButton(
     tab_automatico_id,
     text="Gerar Plaquinha",
-    command=gerar_placa_botao_automatico,
+    command=gerar_placa_botao_automatico_id,
     fg_color=VERDEPLACA,
     hover_color=VERDEPLACADARK
 )
-botao_gerar_automatico.grid(row=contadorRow, column=0, columnspan=2, padx=20, pady=20)
+botao_gerar_automatico.grid(row=contadorRow, column=0, columnspan=4, padx=20, pady=20)
 contadorRow += 1
 
 # Wikipedia
@@ -312,6 +388,8 @@ app.rowconfigure(1, weight=1)
 
 
 
+
+
 # Tab Automatico Nome Cientifico
 
 tab_nome_cientifico.columnconfigure(0, weight=1)
@@ -319,8 +397,8 @@ tab_nome_cientifico.columnconfigure(1, weight=1)
 
 contadorRow3 = 0
 
-# Campo Nome Científico (em vez de ID)
-label_nomeCie3 = ctk.CTkLabel(tab_nome_cientifico, text="Nome Científico", text_color="black")
+# Campo Nome Científico
+label_nomeCie3 = ctk.CTkLabel(tab_nome_cientifico, text="Nome Científico:", text_color="black")
 label_nomeCie3.grid(row=contadorRow3, column=0, columnspan=2, padx=20, pady=(20, 0), sticky="w")
 contadorRow3 += 1
 entry_nomeCie3 = ctk.CTkEntry(tab_nome_cientifico, fg_color="white", border_color=CINZAFRENTE)
@@ -331,7 +409,7 @@ contadorRow3 += 1
 botao_pesquisar_nome = ctk.CTkButton(
     tab_nome_cientifico,
     text="Importar Informações",
-    # command=preencher_por_nome_cientifico,
+    command=preencher_campos_automaticamente_nomecie,
     fg_color=VERDEPLACA,
     hover_color=VERDEPLACADARK
 )
@@ -383,11 +461,11 @@ contadorRow3 += 1
 botao_gerar_automatico = ctk.CTkButton(
     tab_nome_cientifico,
     text="Gerar Plaquinha",
-    # command=gerar_placa_botao_automatico,
+    command=gerar_placa_botao_automatico_nomecie,
     fg_color=VERDEPLACA,
     hover_color=VERDEPLACADARK
 )
-botao_gerar_automatico.grid(row=contadorRow3, column=0, columnspan=2, padx=20, pady=20)
+botao_gerar_automatico.grid(row=contadorRow3, column=0, columnspan=4, padx=20, pady=20)
 contadorRow3 += 1
 
 # Campo Wikipedia
