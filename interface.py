@@ -1,8 +1,19 @@
 import customtkinter as ctk
+import tkinter as tk
 from tkinter import messagebox
 from tkinter import filedialog as fd
 from placa import gera_placa
 from base_de_dados import *
+import sys
+import os
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 
 ctk.set_appearance_mode("Light")
@@ -197,13 +208,14 @@ def preencher_campos_automaticamente_nomecie():
     except Exception as e:
         messagebox.showerror("Erro na busca", str(e))
 
-        
+
 
 
 # Janela principal
 app = ctk.CTk()
 app.title("Gerador de Plaquinha")
 app.resizable(False, False)
+app.iconbitmap(resource_path("icon.ico"))
 
 # Cabecalho
 frame_titulo = ctk.CTkFrame(app, fg_color=VERDEPLACA)
