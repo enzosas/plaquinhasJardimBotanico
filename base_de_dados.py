@@ -82,5 +82,3 @@ def buscar_nome_popular_wikidata(nome_cientifico):
             return results[0]['label_pt']['value'].title()
 
     return None
-
-print(buscar_nome_popular_wikipedia("Spiraea ariifolia"))

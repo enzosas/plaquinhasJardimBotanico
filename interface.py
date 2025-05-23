@@ -167,7 +167,6 @@ def preencher_campos_automaticamente_nomecie():
             messagebox.showwarning("Nome científico não encontrado", f"Nenhum dado encontrado para '{nomecie}'.")
             return
 
-        print(nomecie)
         id = str(int(dados.get("numtombo","")))
         link = f"https://jbsm.inf.ufsm.br/acervo/item/{id.zfill(5)}"
         nomePopular = buscar_nome_popular_wikidata(nomecie)
@@ -275,6 +274,7 @@ combo_layout = ctk.CTkComboBox(
     button_color=VERDEPLACA
 )
 combo_layout.grid(row=9, column=0, padx=20, pady=(0, 10), sticky="ew")
+combo_layout.set("Layout Quadrado")
 
 # Botão de gerar
 botao_gerar = ctk.CTkButton(
@@ -358,6 +358,7 @@ combo_layout2 = ctk.CTkComboBox(
     button_color=VERDEPLACA
 )
 combo_layout2.grid(row=contadorRow, column=0, columnspan=2, padx=20, pady=(0, 10), sticky="ew")
+combo_layout2.set("Layout Quadrado")
 contadorRow += 1
 
 # Botão de gerar
@@ -455,6 +456,7 @@ combo_layout3 = ctk.CTkComboBox(
     button_color=VERDEPLACA
 )
 combo_layout3.grid(row=contadorRow3, column=0, columnspan=2, padx=20, pady=(0, 10), sticky="ew")
+combo_layout3.set("Layout Quadrado")
 contadorRow3 += 1
 
 # Botão de gerar
