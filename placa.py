@@ -1,6 +1,16 @@
 import fitz
 import qrcode
 from pathlib import Path
+import sys
+import os
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 def gera_QR(link):
     qr = qrcode.QRCode(
@@ -19,9 +29,9 @@ def gera_placa(nomePop, nomeCie, codigo, urlQR, layout, diretorio_saida=None):
 
     # Diretorio base e fontes
     base_dir = Path(__file__).parent
-    fonteNegritoPath = base_dir / "open-sans.bold.ttf"
-    fonteItalicoPath = base_dir / "open-sans.italic.ttf"
-    fonteNormalPath = base_dir / "open-sans.regular.ttf"
+    fonteNegritoPath = Path(resource_path("open-sans.bold.ttf"))
+    fonteItalicoPath = Path(resource_path("open-sans.italic.ttf"))
+    fonteNormalPath = Path(resource_path("open-sans.regular.ttf"))
 
     # Funcao para criacao das caixas de texto
     def gera_caixa_texto(pSE_x, pontoY, fonte, paginaWidth):
@@ -51,11 +61,11 @@ def gera_placa(nomePop, nomeCie, codigo, urlQR, layout, diretorio_saida=None):
 
     # Inicializa documento
     if layout == "layout0":
-        doc = fitz.open("placa-fundo.pdf")
+        doc = fitz.open(resource_path("placa-fundo.pdf"))
     elif layout == "layout1":
-        doc = fitz.open("placa-fundo-1.pdf")
+        doc = fitz.open(resource_path("placa-fundo-1.pdf"))
     elif layout == "layout2":
-        doc = fitz.open("placa-fundo-2.pdf")
+        doc = fitz.open(resource_path("placa-fundo-2.pdf"))
     else:
         print("erro layout")
         return
