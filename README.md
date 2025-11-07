@@ -1,5 +1,5 @@
 # Plaquinhas Jardim Botanico
-Este projeto tem como objetivo desenvolver plaquinhas interativas com o usuário para o Jardim Botanico de Santa Maria de maneira automatizada usando um aplicativo próprio.
+Este projeto tem como objetivo automatizar a criação de plaquinhas com QRCode educativo para aumentar a interatividade e autonomia da visita ao Jardim Botanico de Santa Maria. Neste repositório está presente o aplicativo Python capaz de gerar as plaquinhas para impressão.
 
 ## Funcionalidade
 O gerador executável de plaquinhas, implementado em Python, é capaz de gerar plaquinhas padronizadas seguindo 3 modelos para escolha. Cada plaquinha contém um QRCode que direciona à página da planta no site do Jardim Botânico que também foi implementado por outra equipe neste projeto, trazendo ao usuário curiosidades sobre a espécie. Existem 3 modos de geração:
